@@ -52,6 +52,38 @@ body{
 
 除非用户明确指定其他形式，使用“封面 → 内容页 → 结束页”的顺序。
 
+## 顶部目录导航（强制）
+
+每一张内容页都必须保留顶部目录导航；它是 JMC 书页式演示的固定骨架，不是可有可无的装饰。目录只列出内容页，不列封面和结束页，并满足以下要求：
+
+- 横向排列在页面顶部，使用简洁的小字号文字；不使用侧边栏或单独的目录页替代。
+- 当前内容页必须高亮，并使用蓝色胶囊、下划线或同等清晰的状态标记。
+- 点击目录项可跳转到对应内容页；翻页时同步更新当前高亮项。
+- 内容区要为目录留出顶部空间，目录不能被标题、Logo 或正文遮挡。
+- 封面和结束页可以隐藏目录，但进入第一张内容页后必须显示。
+
+```html
+<nav class="top-nav" aria-label="演示目录">
+  <a class="top-nav__item is-active" href="#" data-slide="1">结论</a>
+  <a class="top-nav__item" href="#" data-slide="2">时间线</a>
+  <a class="top-nav__item" href="#" data-slide="3">方法论</a>
+</nav>
+```
+
+```css
+.top-nav{
+  position:absolute; top:28px; left:48px; right:230px; z-index:20;
+  display:flex; align-items:center; gap:26px;
+}
+.top-nav__item{
+  color:var(--text-3); font-size:14px; text-decoration:none;
+  white-space:nowrap; transition:color .2s ease, background .2s ease;
+}
+.top-nav__item.is-active{
+  color:#fff; background:var(--accent); border-radius:999px; padding:8px 14px;
+}
+```
+
 ## 视觉语言
 
 在 `:root` 集中定义颜色、内容组件的圆角和阴影。默认采用白底、蓝青强调色和轻量玻璃质感：
@@ -89,9 +121,9 @@ body{
 
 ## 基础导航
 
-为多页演示实现以下轻量交互：
+为多页演示实现以下轻量交互（顶部目录为强制项）：
 
-- 顶部目录：仅索引中间内容页，当前页高亮。
+- 顶部目录：按“顶部目录导航（强制）”实现，仅索引中间内容页，当前页高亮并可点击跳转。
 - 底部圆点、页码和 3px 进度条。
 - 键盘支持 `←`、`→`、空格、`Home`、`End`；点击左右区域可翻页，并排除按钮和导航区域。
 - `F` 和 Logo 点击共用全屏切换函数。
