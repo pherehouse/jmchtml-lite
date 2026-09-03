@@ -98,8 +98,13 @@ npx skills update jmchtml-lite
 ```text
 jmchtml-lite/
 ├── README.md   # 安装和使用说明
-└── SKILL.md    # Agent 执行规则
+├── SKILL.md    # Agent 执行规则
+└── assets/
+    ├── jmc-ford-logo.png             # 原始透明 PNG
+    └── jmc-ford-logo.data-uri.txt    # 已预编码的 Data URI，生成时直接复制
 ```
+
+Logo 已随 Skill 预先编码。生成 HTML 时直接复用 `assets/jmc-ford-logo.data-uri.txt`，不需要再次转换 PNG。
 
 ## 相关链接
 

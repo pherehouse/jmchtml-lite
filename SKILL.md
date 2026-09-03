@@ -74,13 +74,13 @@ body{
 
 ## JMC 标识
 
-默认在 `.deck::after` 固定右上角 Logo。使用本技能 `assets/jmc-ford-logo.png` 的透明 PNG Base64 编码，直接内嵌在 HTML/CSS 中；不要使用相对路径、外链或非透明底图。Logo 只作冠名，不参与内容布局。
+默认在 `.deck::after` 固定右上角 Logo。直接复制本技能 `assets/jmc-ford-logo.data-uri.txt` 中已经编码好的完整 Data URI，内嵌在 HTML/CSS 中；不要每次重新读取 PNG 或转换 Base64，不要使用相对路径、外链或非透明底图。Logo 只作冠名，不参与内容布局。
 
 ```css
 .deck::after{
   content:''; position:absolute; top:34px; right:44px; z-index:15;
   width:150px; aspect-ratio:288/52;
-  background:url('data:image/png;base64,<由 assets/jmc-ford-logo.png 编码得到的完整 Base64>') no-repeat center/contain;
+  background:url('<直接复制 assets/jmc-ford-logo.data-uri.txt 的完整一行内容>') no-repeat center/contain;
   pointer-events:none;
 }
 ```
