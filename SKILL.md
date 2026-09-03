@@ -61,19 +61,29 @@ body{
 - 点击目录项可跳转到对应内容页；翻页时同步更新当前高亮项。
 - 内容区要为目录留出顶部空间，目录不能被标题、Logo 或正文遮挡。
 - 封面和结束页可以隐藏目录，但进入第一张内容页后必须显示。
+- 浏览器窗口缩小时不能让目录挤压、换行或溢出；在窄屏或矮窗口中自动折叠为“目录”按钮，点击后展开浮层菜单，选择目录项后自动收起。
 
 ```html
 <nav class="top-nav" aria-label="演示目录">
-  <a class="top-nav__item is-active" href="#" data-slide="1">结论</a>
-  <a class="top-nav__item" href="#" data-slide="2">时间线</a>
-  <a class="top-nav__item" href="#" data-slide="3">方法论</a>
+  <button class="top-nav__toggle" type="button" aria-expanded="false" aria-controls="top-nav-list">目录</button>
+  <div class="top-nav__list" id="top-nav-list">
+    <a class="top-nav__item is-active" href="#" data-slide="1">结论</a>
+    <a class="top-nav__item" href="#" data-slide="2">时间线</a>
+    <a class="top-nav__item" href="#" data-slide="3">方法论</a>
+  </div>
 </nav>
 ```
 
 ```css
 .top-nav{
   position:absolute; top:28px; left:48px; right:230px; z-index:20;
+}
+.top-nav__list{
   display:flex; align-items:center; gap:26px;
+}
+.top-nav__toggle{
+  display:none; border:0; color:#fff; background:var(--accent);
+  border-radius:999px; padding:8px 14px; font:inherit; cursor:pointer;
 }
 .top-nav__item{
   color:var(--text-3); font-size:14px; text-decoration:none;
@@ -82,7 +92,23 @@ body{
 .top-nav__item.is-active{
   color:#fff; background:var(--accent); border-radius:999px; padding:8px 14px;
 }
+
+@media (max-width:760px), (max-height:560px){
+  .top-nav{top:18px; left:18px; right:150px;}
+  .top-nav__toggle{display:inline-flex; align-items:center; gap:6px;}
+  .top-nav__list{
+    display:none; position:absolute; top:44px; left:0; min-width:150px;
+    flex-direction:column; align-items:stretch; gap:4px; padding:8px;
+    background:rgba(255,255,255,.98); border-radius:12px;
+    box-shadow:var(--shadow);
+  }
+  .top-nav.is-open .top-nav__list{display:flex;}
+  .top-nav__item{padding:9px 10px;}
+  .top-nav__item.is-active{padding:9px 10px;}
+}
 ```
+
+折叠导航至少需要同步以下行为：点击 `.top-nav__toggle` 切换 `.top-nav.is-open` 和 `aria-expanded`；点击任一目录项后移除 `.is-open`；窗口恢复到宽屏时自动收起菜单。响应式 `@media` 只用于调整导航和 Logo 的布局，不能把 `.deck` 缩成带边框的卡片。
 
 ## 视觉语言
 
@@ -121,6 +147,10 @@ Logo 使用真实 DOM 元素，避免伪元素被版式覆盖：
   position:absolute; top:34px; right:44px; z-index:50;
   display:block; width:150px; height:auto;
   pointer-events:none;
+}
+
+@media (max-width:760px), (max-height:560px){
+  .jmc-logo{top:18px; right:18px; width:112px;}
 }
 ```
 
