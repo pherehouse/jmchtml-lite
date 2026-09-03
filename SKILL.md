@@ -1,11 +1,11 @@
 ---
 name: "jmchtml-lite"
-description: "创建简洁的 JMC 书页式 HTML 演示。适用于多页汇报、方案展示或 HTML 幻灯片；不处理 Obsidian 兼容和浏览器验收。"
+description: "创建简洁、全屏无外框的 JMC 书页式 HTML 演示。适用于多页汇报、方案展示或 HTML 幻灯片；页面始终铺满浏览器视口，不处理 Obsidian 兼容和浏览器验收。"
 ---
 
 # JMC HTML 演示：精简版
 
-用于生成可直接打开的单文件 HTML 演示。目标是做出有封面感、翻页顺畅、视觉统一的 JMC 风格汇报页；不加入与交付无关的兼容层或验收流程。
+用于生成可直接打开的单文件 HTML 演示。目标是做出有封面感、翻页顺畅、视觉统一的 JMC 风格汇报页；画面必须直接铺满浏览器视口，不出现外层留白、灰色画布、圆角容器或投影边框；不加入与交付无关的兼容层或验收流程。
 
 ## 输出边界
 
@@ -13,6 +13,37 @@ description: "创建简洁的 JMC 书页式 HTML 演示。适用于多页汇报�
 - 不适配 Obsidian、`iframe.srcdoc` 或 URL hash。
 - 不调用 Puppeteer、浏览器控制工具或截图工具做预览/验收。
 - 不附加检查清单；完成内容和交互实现后即可交付。
+- “全屏”指演示画面铺满浏览器可视区域；浏览器本身的标签栏、地址栏不属于页面可控制范围。`F` 或 Logo 点击触发的 Fullscreen API 仅作为可选增强，不能替代默认全屏版式。
+
+## 全屏画布（强制）
+
+`.deck` 是整个浏览器画面的根容器，不是居中的白色卡片。每次生成都必须先写入以下骨架，再添加具体版式：
+
+```css
+html, body{
+  width:100%; height:100%; margin:0; overflow:hidden;
+}
+body{
+  background:var(--bg); /* 不显示 deck 外部画布 */
+}
+.deck{
+  position:fixed; inset:0;
+  width:100vw; height:100vh;
+  overflow:hidden;
+  border:0; border-radius:0; box-shadow:none;
+  background:var(--bg);
+}
+.slide{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+}
+```
+
+- 禁止对 `html`、`body` 或 `.deck` 使用 `padding`、`max-width`、`max-height`、`margin:auto`、圆角、阴影、缩放或任何会露出外部背景的定位。
+- 禁止使用 `.stage`、`.frame`、`.app` 等包住 `.deck` 后再设置居中、留边、圆角或投影的外层舞台。确有包装元素时，它只能是全视口且透明的交互层。
+- `--radius` 和 `--shadow` 只可用于正文中的卡片、面板、数据块等内容组件；不得用于 `.deck`、`.slide` 或任何演示画面外壳。
+- 不要用 `@media` 查询将桌面端 `.deck` 缩为带边框的预览卡片。窄屏时仍以可视区域为画布，可缩放内容或调整排版。
+- 完成前静态检查上述四个选择器的 CSS：页面在 1920×1080 等常见桌面视口下应无画面外露区域、无外轮廓圆角、无容器投影。
 
 ## 页面结构
 
@@ -26,7 +57,7 @@ description: "创建简洁的 JMC 书页式 HTML 演示。适用于多页汇报�
 
 ## 视觉语言
 
-在 `:root` 集中定义颜色、圆角和阴影。默认采用白底、蓝青强调色和轻量玻璃质感：
+在 `:root` 集中定义颜色、内容组件的圆角和阴影。默认采用白底、蓝青强调色和轻量玻璃质感：
 
 ```css
 :root{
@@ -34,8 +65,8 @@ description: "创建简洁的 JMC 书页式 HTML 演示。适用于多页汇报�
   --text-1:#111216; --text-2:#55596a; --text-3:#8a8f9e;
   --accent:#0A79C3; --accent-2:#036AA2; --accent-3:#0FA3B1;
   --grad:linear-gradient(135deg,#0A79C3,#036AA2 55%,#0FA3B1);
-  --radius:18px; --radius-sm:12px;
-  --shadow:0 10px 30px rgba(18,24,40,.08),0 2px 6px rgba(18,24,40,.04);
+  --radius:18px; --radius-sm:12px; /* 仅内容组件 */
+  --shadow:0 10px 30px rgba(18,24,40,.08),0 2px 6px rgba(18,24,40,.04); /* 仅内容组件 */
   --ease:cubic-bezier(.4,0,.2,1);
 }
 ```
@@ -57,7 +88,7 @@ description: "创建简洁的 JMC 书页式 HTML 演示。适用于多页汇报�
 }
 ```
 
-如页面需要全屏，在 Logo 上方放一个透明按钮，调用同一个 `fullscreen()` 函数切换全屏；不要添加可见的额外按钮。
+如需提供浏览器 Fullscreen API 增强，可在 Logo 上方放一个透明按钮，调用同一个 `fullscreen()` 函数切换全屏；不要添加可见的额外按钮。无论是否提供该交互，页面默认版式都必须全屏无外框。
 
 ## 基础导航
 
